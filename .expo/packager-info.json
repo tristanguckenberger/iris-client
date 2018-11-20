@@ -1,9 +1,9 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 13361,
-  "expoServerNgrokUrl": "https://pz-3pt.anonymous.iris-client.exp.direct",
-  "packagerNgrokUrl": "https://packager.pz-3pt.anonymous.iris-client.exp.direct",
-  "ngrokPid": 13378
+  "expoServerPort": null,
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": "https://er-mqc.anonymous.iris-client.exp.direct",
+  "packagerNgrokUrl": "https://packager.er-mqc.anonymous.iris-client.exp.direct",
+  "ngrokPid": 17160
 }
