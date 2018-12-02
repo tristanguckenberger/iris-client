@@ -8,6 +8,7 @@ const API_URL = 'http://max-image-caption-generator.max.us-south.containers.appd
 export default class App extends React.Component {
   state = {
     hasCameraPermission: null,
+    readyToCapture: true,
   };
 
   async componentDidMount() {
@@ -16,17 +17,15 @@ export default class App extends React.Component {
   }
 
   capturePhoto = async () => {
-    Speech.speak('Capturing');
-
-    if (this.camera) {
-      const photo = await this.camera.takePictureAsync();
-      return photo;
-    }
-
-    return null;
+    Speech.speak('Capturing Image');
+    const photo = await this.camera.takePictureAsync({
+      quality: 1,
+    });
+    this.camera.pausePreview();
+    return photo;
   };
 
-  getDescription = async (imageUri) => {
+  fetchImageDescription = async (imageUri) => {
     const uriParts = imageUri.split('.');
     const fileType = uriParts[uriParts.length - 1];
 
@@ -48,14 +47,28 @@ export default class App extends React.Component {
       .catch(error => console.error('Error:', error));
   }
 
-  handleTouchPress = async () => {
-    Vibration.vibrate(100);
+  captureImageAndAnalyze = async () => {
+    this.setState({ readyToCapture: false });
+    Vibration.vibrate([0, 100, 100, 100, 1500], true);
+
     const photo = await this.capturePhoto();
-    const descriptionResponse = await this.getDescription(photo.uri);
+    const descriptionResponse = await this.fetchImageDescription(photo.uri);
     const descriptionResponseJSON = await descriptionResponse.json();
     console.debug('JSON Response: ', descriptionResponseJSON);
     const description = descriptionResponseJSON.predictions[0].caption;
     Speech.speak(description);
+
+    this.setState({ readyToCapture: true });
+    Vibration.cancel();
+    this.camera.resumePreview();
+  }
+
+  handleTap = async () => {
+    const { readyToCapture } = this.state;
+
+    if (readyToCapture) {
+      this.captureImageAndAnalyze();
+    }
   }
 
   render() {
@@ -63,15 +76,15 @@ export default class App extends React.Component {
 
     if (hasCameraPermission === null) return <View />;
 
-    // TODO: Handle user denying camera permission
     if (hasCameraPermission === false) {
-      return <Text>No access to camera</Text>;
+      Speech.speak('Camera access is required to use Iris');
+      return <Text>Camera access is required to use Iris</Text>;
     }
 
     return (
       <View
         style={{ flex: 1 }}
-        onResponderGrant={this.handleTouchPress}
+        onResponderGrant={this.handleTap}
         onStartShouldSetResponder={() => true}
       >
         <Camera
