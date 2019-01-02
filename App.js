@@ -96,7 +96,7 @@ export default class App extends React.Component {
           autoFocus={Camera.Constants.AutoFocus.on}
           ratio="16:9"
         >
-          <View style={{ flex: 1, backgroundColor: 'transparent', flexDirection: 'row' }}>
+          <View style={{ flex: 1, backgroundColor: 'black', flexDirection: 'row' }}>
             <TouchableOpacity style={{ flex: 0.1, alignSelf: 'flex-end' }} />
           </View>
         </Camera>
